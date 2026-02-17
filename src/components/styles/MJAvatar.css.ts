@@ -1,4 +1,4 @@
-import { style, styleVariants } from '@vanilla-extract/css';
+import { style, styleVariants, keyframes } from '@vanilla-extract/css';
 import { vars } from '../../constants/styles/vars.css';
 
 /* 共通：円形・中央揃え・はみ出し非表示 */
@@ -55,4 +55,26 @@ export const fallbackSizes = styleVariants({
   sm: { fontSize: vars.font.sizeXs },
   md: { fontSize: vars.font.sizeSm },
   lg: { fontSize: vars.font.sizeBase },
+});
+
+// スケルトンローディング風アニメーション
+const skeleton = keyframes({
+  '0%': {
+    backgroundPosition: '-200% 0',
+  },
+  '100%': {
+    backgroundPosition: '200% 0',
+  },
+});
+
+export const loading = style({
+  borderRadius: '50%',
+  background: `linear-gradient(to right, ${vars.color.surface} 0%, #333 50%, ${vars.color.surface} 100%)`,
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundSize: '200% 100%',
+  animation: `${skeleton} 1.5s ease-in-out infinite`,
 });

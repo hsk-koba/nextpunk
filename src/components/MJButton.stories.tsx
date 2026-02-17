@@ -27,6 +27,15 @@ const meta: Meta<typeof MJButton> = {
       control: 'boolean',
       description: '無効化',
     },
+    loading: {
+      control: 'boolean',
+      description: '読み込み中（クリック無効）',
+    },
+    loadingVariant: {
+      control: 'radio',
+      options: ['spinner', 'skeleton'],
+      description: 'loading 時の表示（spinner: スピナーのみ / skeleton: スケルトンアニメ）',
+    },
     label: {
       control: 'text',
       description: 'ボタンラベル（children がない場合に表示）',
@@ -113,6 +122,35 @@ export const Disabled: Story = {
     label: 'Disabled Button',
     variant: 'primary',
     disabled: true,
+  },
+};
+
+/** 読み込み中（loading） */
+export const Loading: Story = {
+  args: {
+    label: 'Submit',
+    variant: 'primary',
+    loading: true,
+  },
+};
+
+/** 読み込み中・アウトライン */
+export const LoadingOutline: Story = {
+  args: {
+    label: "Submit",
+    variant: 'outline',
+    loading: true,
+    loadingVariant: "spinner"
+  },
+};
+
+/** スケルトンローディング */
+export const LoadingSkeleton: Story = {
+  args: {
+    label: 'Submit',
+    variant: 'primary',
+    loading: true,
+    loadingVariant: 'skeleton',
   },
 };
 

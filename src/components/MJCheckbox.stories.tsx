@@ -27,6 +27,10 @@ const meta: Meta<typeof MJCheckbox> = {
       control: 'text',
       description: 'エラーメッセージ',
     },
+    loading: {
+      control: 'boolean',
+      description: '読み込み中（スケルトン表示・クリック無効）',
+    },
   },
   decorators: [
     (Story) => (
@@ -135,6 +139,22 @@ export const DisabledChecked: Story = {
     label: '無効（チェック済み）',
     checked: true,
     disabled: true,
+  },
+};
+
+/** スケルトンローディング */
+export const Loading: Story = {
+  args: {
+    label: '同意する',
+    loading: true,
+  },
+};
+
+/** スケルトンローディング（長いラベルで枠を保持） */
+export const LoadingLongLabel: Story = {
+  args: {
+    label: '利用規約およびプライバシーポリシーに同意する',
+    loading: true,
   },
 };
 

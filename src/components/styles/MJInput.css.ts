@@ -1,5 +1,66 @@
-import { style, styleVariants } from '@vanilla-extract/css';
+import { style, styleVariants, keyframes } from '@vanilla-extract/css';
 import { vars } from '../../constants/styles/vars.css';
+
+/* スケルトンローディング */
+const skeleton = keyframes({
+  '0%': { backgroundPosition: '-200% 0' },
+  '100%': { backgroundPosition: '200% 0' },
+});
+
+export const loadingInputWrapper = style({
+  position: 'relative',
+  width: '100%',
+  borderRadius: vars.border.radiusMd,
+});
+
+export const loadingSkeleton = style({
+  position: 'absolute',
+  inset: 0,
+  borderRadius: 'inherit',
+  background: `linear-gradient(to right, ${vars.color.surface} 0%, #333 50%, ${vars.color.surface} 100%)`,
+  backgroundSize: '200% 100%',
+  animation: `${skeleton} 1.5s ease-in-out infinite`,
+  pointerEvents: 'none',
+});
+
+/** ローディング時はクリック無効・入力無効 */
+export const loading = style({
+  cursor: 'wait',
+  pointerEvents: 'none',
+  opacity: 0.8,
+});
+
+const skeletonGradient = `linear-gradient(to right, ${vars.color.surface} 0%, #333 50%, ${vars.color.surface} 100%)`;
+
+/** ローディング時のラベル領域（枠保持用の非表示テキスト + スケルトン） */
+export const labelSkeletonWrapper = style({
+  position: 'relative',
+  display: 'inline-block',
+  marginBottom: '4px',
+  marginLeft: '3px',
+});
+
+export const labelPlaceholder = style({
+  visibility: 'hidden',
+  fontFamily: vars.font.familyPrimary,
+  fontSize: vars.font.sizeXs,
+  lineHeight: 1.5,
+});
+
+/** ラベル文字のスケルトン */
+export const labelSkeleton = style({
+  position: 'absolute',
+  left: 0,
+  top: '50%',
+  transform: 'translateY(-50%)',
+  height: '0.75em',
+  minWidth: 80,
+  maxWidth: '100%',
+  borderRadius: 4,
+  background: skeletonGradient,
+  backgroundSize: '200% 100%',
+  animation: `${skeleton} 1.5s ease-in-out infinite`,
+});
 
 /* Base input (共通) */
 export const base = style({

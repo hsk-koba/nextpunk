@@ -34,6 +34,10 @@ const meta: Meta<typeof MJSelect> = {
       control: 'boolean',
       description: '無効化',
     },
+    loading: {
+      control: 'boolean',
+      description: '読み込み中（ラベル・セレクト枠をスケルトン表示）',
+    },
     errorMessage: {
       control: 'text',
       description: 'エラーメッセージ',
@@ -137,6 +141,17 @@ export const Disabled: Story = {
     options: defaultOptions,
     placeholder: '選択してください',
     disabled: true,
+  },
+};
+
+/** 読み込み中（スケルトン） */
+export const Loading: Story = {
+  args: {
+    variant: 'primary',
+    label: '都道府県',
+    options: defaultOptions,
+    placeholder: '選択してください',
+    loading: true,
   },
 };
 

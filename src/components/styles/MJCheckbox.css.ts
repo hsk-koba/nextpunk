@@ -13,6 +13,63 @@ export const itemPulse = style({
   animation: `${brightnessPulse} 0.8s ease`,
 });
 
+/* スケルトンローディング（MJAvatar 同様のグラデーションアニメーション） */
+const skeleton = keyframes({
+  '0%': { backgroundPosition: '-200% 0' },
+  '100%': { backgroundPosition: '200% 0' },
+});
+
+const skeletonGradient = `linear-gradient(to right, ${vars.color.surface} 0%, #333 50%, ${vars.color.surface} 100%)`;
+
+/** チェックボックス枠のスケルトン */
+export const boxSkeleton = style({
+  flexShrink: 0,
+  width: boxSize,
+  height: boxSize,
+  minWidth: boxSize,
+  minHeight: boxSize,
+  borderRadius: vars.border.radiusSm,
+  background: skeletonGradient,
+  backgroundSize: '200% 100%',
+  animation: `${skeleton} 1.5s ease-in-out infinite`,
+});
+
+/** ローディング時のラベル領域（枠保持用の非表示テキスト + スケルトン） */
+export const labelSkeletonWrapper = style({
+  flex: 1,
+  minWidth: 0,
+  position: 'relative',
+  display: 'inline-flex',
+  alignItems: 'center',
+});
+
+export const labelPlaceholder = style({
+  visibility: 'hidden',
+  fontSize: 'inherit',
+  lineHeight: 1.5,
+});
+
+/** ラベル文字のスケルトン（placeholder の幅に合わせて表示） */
+export const labelSkeleton = style({
+  position: 'absolute',
+  left: 0,
+  top: '50%',
+  transform: 'translateY(-50%)',
+  height: '1em',
+  width: '100%',
+  minWidth: 80,
+  borderRadius: 4,
+  background: skeletonGradient,
+  backgroundSize: '200% 100%',
+  animation: `${skeleton} 1.5s ease-in-out infinite`,
+});
+
+/** ローディング時はクリック無効 */
+export const loading = style({
+  cursor: 'wait',
+  pointerEvents: 'none',
+});
+
 /* グループラベル用ラッパー */
 export const labelWrapper = style({
   marginBottom: '9.5px',

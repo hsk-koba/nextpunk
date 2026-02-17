@@ -14,6 +14,93 @@ export const optionItemPulse = style({
   animation: `${brightnessPulse} 0.8s ease`,
 });
 
+/* スケルトンローディング */
+const skeleton = keyframes({
+  '0%': { backgroundPosition: '-200% 0' },
+  '100%': { backgroundPosition: '200% 0' },
+});
+
+const skeletonGradient = `linear-gradient(to right, ${vars.color.surface} 0%, #333 50%, ${vars.color.surface} 100%)`;
+
+/** ラジオの円のスケルトン */
+export const circleSkeleton = style({
+  flexShrink: 0,
+  width: radioSize,
+  height: radioSize,
+  minWidth: radioSize,
+  minHeight: radioSize,
+  borderRadius: '50%',
+  background: skeletonGradient,
+  backgroundSize: '200% 100%',
+  animation: `${skeleton} 1.5s ease-in-out infinite`,
+});
+
+/** ローディング時のオプションラベル領域（枠保持用の非表示テキスト + スケルトン） */
+export const labelSkeletonWrapper = style({
+  flex: 1,
+  minWidth: 0,
+  position: 'relative',
+  display: 'inline-flex',
+  alignItems: 'center',
+});
+
+export const labelPlaceholder = style({
+  visibility: 'hidden',
+  fontSize: 'inherit',
+  lineHeight: 1.5,
+});
+
+/** オプションラベル文字のスケルトン */
+export const labelSkeleton = style({
+  position: 'absolute',
+  left: 0,
+  top: '50%',
+  transform: 'translateY(-50%)',
+  height: '1em',
+  width: '100%',
+  minWidth: 80,
+  borderRadius: 4,
+  background: skeletonGradient,
+  backgroundSize: '200% 100%',
+  animation: `${skeleton} 1.5s ease-in-out infinite`,
+});
+
+/** グループラベル（上ラベル）のスケルトン用ラッパー */
+export const groupLabelSkeletonWrapper = style({
+  position: 'relative',
+  display: 'inline-block',
+  marginBottom: '9.5px',
+  marginLeft: '3px',
+});
+
+export const groupLabelPlaceholder = style({
+  visibility: 'hidden',
+  fontFamily: vars.font.familyPrimary,
+  fontSize: vars.font.sizeXs,
+  lineHeight: 1.5,
+});
+
+/** グループラベル文字のスケルトン */
+export const groupLabelSkeleton = style({
+  position: 'absolute',
+  left: 0,
+  top: '50%',
+  transform: 'translateY(-50%)',
+  height: '0.75em',
+  minWidth: 80,
+  maxWidth: '100%',
+  borderRadius: 4,
+  background: skeletonGradient,
+  backgroundSize: '200% 100%',
+  animation: `${skeleton} 1.5s ease-in-out infinite`,
+});
+
+/** ローディング時はクリック無効 */
+export const loading = style({
+  cursor: 'wait',
+  pointerEvents: 'none',
+});
+
 /* グループラベル用ラッパー */
 export const labelWrapper = style({
   marginBottom: '9.5px',

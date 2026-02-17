@@ -24,7 +24,7 @@ export const headerRow = style({
 
 export const headerCell = style({
   padding: `${vars.spacing.sm} ${vars.spacing.md}`,
-  textAlign: 'left',
+  textAlign: 'center',
   fontWeight: vars.font.weightBold,
   color: '#fff',
   borderBottom: `2px solid ${vars.color.border}`,
@@ -51,6 +51,7 @@ export const bodyRow = style({
 export const sortButton = style({
   display: 'inline-flex',
   alignItems: 'center',
+  justifyContent: 'center',
   gap: vars.spacing.xs,
   width: '100%',
   padding: `${vars.spacing.sm} ${vars.spacing.md}`,
@@ -60,7 +61,7 @@ export const sortButton = style({
   font: 'inherit',
   color: 'inherit',
   cursor: 'pointer',
-  textAlign: 'left',
+  textAlign: 'center',
   borderRadius: vars.border.radiusSm,
 });
 

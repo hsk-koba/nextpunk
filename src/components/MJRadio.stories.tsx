@@ -25,6 +25,10 @@ const meta: Meta<typeof MJRadio> = {
       control: 'boolean',
       description: '無効化',
     },
+    loading: {
+      control: 'boolean',
+      description: '読み込み中（ラベル・各オプションの円と文字をスケルトン表示）',
+    },
     errorMessage: {
       control: 'text',
       description: 'エラーメッセージ',
@@ -117,6 +121,16 @@ export const Disabled: Story = {
     options: defaultOptions,
     value: 'b',
     disabled: true,
+  },
+};
+
+/** 読み込み中（スケルトン） */
+export const Loading: Story = {
+  args: {
+    name: 'radio-loading',
+    label: '選択してください',
+    options: defaultOptions,
+    loading: true,
   },
 };
 

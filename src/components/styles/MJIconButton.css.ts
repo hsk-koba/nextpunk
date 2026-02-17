@@ -25,14 +25,6 @@ export const loading = style({
   opacity: 0.8,
 });
 
-/** ローディング時に枠を保持するため、同じ内容を非表示で配置 */
-export const loadingPlaceholder = style({
-  visibility: 'hidden',
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 8,
-});
-
 /** スピナーを中央に重ねるオーバーレイ */
 export const loadingSpinnerOverlay = style({
   position: 'absolute',
@@ -53,7 +45,7 @@ export const loadingSpinner = style({
   flexShrink: 0,
 });
 
-/* スケルトンローディング（MJAvatar 同様のグラデーションアニメーション） */
+/* スケルトンローディング */
 const skeleton = keyframes({
   '0%': { backgroundPosition: '-200% 0' },
   '100%': { backgroundPosition: '200% 0' },
@@ -73,30 +65,23 @@ export const loadingContainer = style({
   position: 'relative',
 });
 
-/* Base button */
-export const base = style({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  textShadow: vars.shadow.md,
-  gap: 8,
-  padding: '12px 16px',
-  fontFamily: vars.font.familyPrimary,
-  fontSize: vars.font.sizeBase,
-  fontWeight: 500,
-  lineHeight: 1.5,
-  textAlign: 'center',
-  textDecoration: 'none',
-  whiteSpace: 'nowrap',
-  cursor: 'pointer',
-  userSelect: 'none',
-  border: `1px solid transparent`,
-  borderRadius: `${vars.border.radiusSm}`,
-  minHeight: 44,
-  background: 'none',
-  textTransform: 'none',
-  transition: vars.transition.fast,
-  boxSizing: 'border-box',
+/** 無効化時の見た目（Default と同じ背景・色 + opacity 0.6） */
+export const disabledState = style({
+  cursor: 'not-allowed',
+  color: vars.color.textPrimary,
+  background: vars.color.surface,
+  border: `1px solid ${vars.color.border}`,
+  opacity: 0.6,
+});
+
+/* アイコンボタン用ベース（サイズごとにレイアウト＋寸法） */
+const iconButtonBase = {
+  display: 'inline-flex' as const,
+  alignItems: 'center' as const,
+  justifyContent: 'center' as const,
+  flexShrink: 0,
+  verticalAlign: 'middle' as const,
+  lineHeight: 1,
   selectors: {
     '&:disabled': {
       cursor: 'not-allowed',
@@ -104,9 +89,14 @@ export const base = style({
       opacity: 0.6,
     },
   },
+};
+export const baseIcon = styleVariants({
+  sm: { ...iconButtonBase, width: 29, height: 29 },
+  md: { ...iconButtonBase, width: 36, height: 36 },
+  lg: { ...iconButtonBase, width: 50, height: 50 },
 });
 
-/* Variants */
+/* Variants（MJButton と共通の見た目） */
 export const variants = styleVariants({
   primary: {
     color: vars.color.textPrimary,
@@ -129,9 +119,8 @@ export const variants = styleVariants({
   outline: {
     color: vars.color.textPrimary,
     position: 'relative',
-    border: '1px solid transparent', // 枠線の太さ分だけ透明な線を作る
-    borderRadius: `${vars.border.radiusSm}`, // 角丸が効く！
-  
+    border: '1px solid transparent',
+    borderRadius: `${vars.border.radiusSm}`,
     backgroundImage: `
       linear-gradient(${vars.color.surface}, ${vars.color.surface}), 
       linear-gradient(45deg, ${vars.color.primaryGradientStart}, ${vars.color.primaryGradientEnd})
@@ -192,22 +181,7 @@ export const variants = styleVariants({
   },
 });
 
-/* Sizes */
-export const sizes = styleVariants({
-  sm: {
-    padding: '8px 16px',
-    fontSize: vars.font.sizeSm,
-    minHeight: 36,
-  },
-  md: {},
-  lg: {
-    padding: '18px 28px',
-    fontSize: vars.font.sizeLg,
-    minHeight: 52,
-  },
-});
-
-/* Icon container (wraps icon or content) */
+/** アイコンラッパー（ボタン内のアイコン用） */
 export const icon = style({
   display: 'inline-flex',
   alignItems: 'center',
@@ -218,14 +192,6 @@ export const icon = style({
   selectors: {
     '&:disabled': {
       cursor: 'not-allowed',
-      background: vars.color.disabled,
-      opacity: 0.6,
     },
   },
-});
-
-export const content = style({
-  display: 'inline-flex',
-  alignItems: 'center',
-  lineHeight: 1.5,
 });

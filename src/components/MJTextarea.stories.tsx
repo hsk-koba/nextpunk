@@ -24,6 +24,10 @@ const meta: Meta<typeof MJTextarea> = {
       control: 'boolean',
       description: '無効化',
     },
+    loading: {
+      control: 'boolean',
+      description: '読み込み中（ラベル・テキストエリア枠をスケルトン表示）',
+    },
     label: {
       control: 'text',
       description: 'ラベル',
@@ -112,6 +116,16 @@ export const Disabled: Story = {
     variant: 'primary',
     placeholder: '無効化されています',
     disabled: true,
+  },
+};
+
+/** 読み込み中（スケルトン） */
+export const Loading: Story = {
+  args: {
+    variant: 'primary',
+    label: 'コメント',
+    placeholder: '読み込み中…',
+    loading: true,
   },
 };
 

@@ -15,6 +15,10 @@ const meta: Meta<typeof MJTypography> = {
       control: 'boolean',
       description: '太字',
     },
+    loading: {
+      control: 'boolean',
+      description: '読み込み中（テキストの代わりにスケルトンバーを表示）',
+    },
     children: {
       control: 'text',
       description: '表示するテキスト',
@@ -120,6 +124,15 @@ export const Bold: Story = {
     variant: 'p',
     bold: true,
     children: '太字の段落テキスト',
+  },
+};
+
+/** 読み込み中（スケルトン） */
+export const Loading: Story = {
+  args: {
+    variant: 'h1',
+    children: '読み込み中のテキスト',
+    loading: true,
   },
 };
 

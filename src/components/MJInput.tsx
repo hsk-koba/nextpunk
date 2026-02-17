@@ -11,6 +11,8 @@ export interface MJInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEl
   className?: string;
   label?: string;
   errorMessage?: string;
+  /** 読み込み中はスケルトン表示・入力無効 */
+  loading?: boolean;
 }
 
 export const MJInput: React.FC<MJInputProps> = ({
@@ -21,20 +23,51 @@ export const MJInput: React.FC<MJInputProps> = ({
   className,
   label,
   errorMessage,
+  loading = false,
+  disabled,
   ...props
 }) => {
-  const inputClassName = [styles.base, styles.variants[errorMessage ? 'danger' : variant], styles.sizes[size], className]
+  const inputClassName = [
+    styles.base,
+    styles.variants[errorMessage ? 'danger' : variant],
+    styles.sizes[size],
+    loading && styles.loading,
+    className,
+  ]
     .filter(Boolean)
     .join(' ');
 
+  const isDisabled = disabled || loading;
+
   return (
     <div>
-      {label != null && label !== '' && (
-        <div className={styles.labelWrapper}>
-          <MJTypography variant="tiny">{label}</MJTypography>
+      {label != null && label !== '' &&
+        (loading ? (
+          <div className={styles.labelSkeletonWrapper}>
+            <span className={styles.labelPlaceholder}>{label}</span>
+            <span className={styles.labelSkeleton} aria-hidden />
+          </div>
+        ) : (
+          <div className={styles.labelWrapper}>
+            <MJTypography variant="tiny">{label}</MJTypography>
+          </div>
+        ))}
+      {loading ? (
+        <div className={styles.loadingInputWrapper}>
+          <input
+            type="text"
+            className={inputClassName}
+            disabled={isDisabled}
+            aria-busy={loading}
+            readOnly
+            tabIndex={-1}
+            {...props}
+          />
+          <span className={styles.loadingSkeleton} aria-hidden />
         </div>
+      ) : (
+        <input type="text" className={inputClassName} disabled={disabled} {...props} />
       )}
-      <input type="text" className={inputClassName} {...props} />
       {errorMessage != null && errorMessage !== '' && (
         <div className={styles.errorMessageWrapper}>
           <MJTypography variant="tiny" className={styles.errorMessage}>{errorMessage}</MJTypography>

@@ -24,6 +24,10 @@ const meta: Meta<typeof MJInput> = {
       control: 'boolean',
       description: '無効化',
     },
+    loading: {
+      control: 'boolean',
+      description: '読み込み中（スケルトン表示）',
+    },
     label: {
       control: 'text',
       description: 'ラベル（表示する場合はストーリー側でラップ）',
@@ -108,6 +112,16 @@ export const Disabled: Story = {
     variant: 'primary',
     placeholder: '無効化されています',
     disabled: true,
+  },
+};
+
+/** 読み込み中（スケルトン） */
+export const Loading: Story = {
+  args: {
+    variant: 'primary',
+    label: 'メールアドレス',
+    placeholder: '読み込み中…',
+    loading: true,
   },
 };
 

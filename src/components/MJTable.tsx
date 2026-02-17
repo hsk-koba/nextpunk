@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
+import { MJTypography } from './MJTypography';
 import * as styles from './styles/MJTable.css';
 
 export interface MJTableColumn<T = Record<string, React.ReactNode>> {
@@ -19,16 +20,19 @@ export interface MJTableProps<T = Record<string, React.ReactNode>> {
   className?: string;
   /** 行の key を返す（React の list key 用） */
   getRowKey?: (row: T, index: number) => string | number;
+  /** 読み込み中はヘッダー・セルを MJTypography のスケルトン表示 */
+  loading?: boolean;
 }
 
 export function MJTable<T extends Record<string, React.ReactNode>>({
-  columns,
-  data,
+  columns = [],
+  data = [],
   sortKey,
   sortDirection = 'asc',
   onSort,
   className,
   getRowKey,
+  loading = false,
 }: MJTableProps<T>) {
   const [flashingKey, setFlashingKey] = useState<string | null>(null);
 
@@ -72,8 +76,10 @@ export function MJTable<T extends Record<string, React.ReactNode>>({
                         : undefined
                     }
                   >
-                    {col.label}
-                    {sortKey === col.key ? (
+                    <MJTypography variant="small" loading={loading}>
+                      {col.label}
+                    </MJTypography>
+                    {!loading && sortKey === col.key ? (
                       sortDirection === 'asc' ? (
                         <ChevronUp size={14} aria-hidden />
                       ) : (
@@ -84,7 +90,9 @@ export function MJTable<T extends Record<string, React.ReactNode>>({
                     )}
                   </button>
                 ) : (
-                  col.label
+                  <MJTypography variant="small" loading={loading}>
+                    {col.label}
+                  </MJTypography>
                 )}
               </th>
             ))}
@@ -96,13 +104,30 @@ export function MJTable<T extends Record<string, React.ReactNode>>({
               key={getRowKey ? getRowKey(row, index) : index}
               className={styles.bodyRow}
             >
-              {columns.map((col) => (
-                <td key={col.key} className={styles.bodyCell}>
-                  {row[col.key] != null && row[col.key] !== ''
-                    ? row[col.key]
-                    : '—'}
-                </td>
-              ))}
+              {columns.map((col) => {
+                const cellValue = row[col.key];
+                const isText =
+                  typeof cellValue === 'string' || typeof cellValue === 'number';
+                const placeholder =
+                  cellValue != null && cellValue !== ''
+                    ? isText
+                      ? String(cellValue)
+                      : '—'
+                    : '—';
+                return (
+                  <td key={col.key} className={styles.bodyCell}>
+                    {loading ? (
+                      <MJTypography variant="small" loading>
+                        {placeholder}
+                      </MJTypography>
+                    ) : isText ? (
+                      <MJTypography variant="small">{cellValue}</MJTypography>
+                    ) : (
+                      cellValue ?? '—'
+                    )}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

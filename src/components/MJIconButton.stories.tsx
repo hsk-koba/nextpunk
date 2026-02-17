@@ -30,6 +30,15 @@ const meta: Meta<typeof MJIconButton> = {
       control: 'boolean',
       description: '無効化',
     },
+    loading: {
+      control: 'boolean',
+      description: '読み込み中（クリック無効）',
+    },
+    loadingVariant: {
+      control: 'radio',
+      options: ['spinner', 'skeleton'],
+      description: 'loading 時の表示（spinner / skeleton）',
+    },
     icon: {
       description: 'lucide-react のアイコンコンポーネント',
       control: false,
@@ -124,6 +133,27 @@ export const Disabled: Story = {
     variant: 'primary',
     disabled: true,
     'aria-label': '共有',
+  },
+};
+
+/** スピナーローディング */
+export const Loading: Story = {
+  args: {
+    icon: Plus,
+    variant: 'primary',
+    loading: true,
+    'aria-label': '追加',
+  },
+};
+
+/** スケルトンローディング */
+export const LoadingSkeleton: Story = {
+  args: {
+    icon: Plus,
+    variant: 'primary',
+    loading: true,
+    loadingVariant: 'skeleton',
+    'aria-label': '追加',
   },
 };
 

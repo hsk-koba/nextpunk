@@ -11,6 +11,7 @@ export interface MJAvatarProps {
   initials?: string;
   size?: MJAvatarSize;
   className?: string;
+  loading?: boolean;
 }
 
 function getInitialsFromString(str: string, maxLength = 2): string {
@@ -32,6 +33,7 @@ export const MJAvatar: React.FC<MJAvatarProps> = ({
   initials,
   size = 'md',
   className,
+  loading = false,
 }) => {
   const [imgError, setImgError] = useState(false);
   const showImage = Boolean(src && !imgError);
@@ -48,7 +50,9 @@ export const MJAvatar: React.FC<MJAvatarProps> = ({
 
   return (
     <span className={rootClassName} role="img" aria-label={alt || fallbackText}>
-      {showImage ? (
+      {loading ? (
+        <div className={styles.loading} />
+      ) : showImage ? (
         <img
           src={src ?? ''}
           alt={alt}

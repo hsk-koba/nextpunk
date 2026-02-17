@@ -15,6 +15,8 @@ export interface MJCheckboxProps
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   errorMessage?: string;
   disabled?: boolean;
+  /** 読み込み中はスケルトン表示・クリック無効 */
+  loading?: boolean;
   className?: string;
 }
 
@@ -25,14 +27,15 @@ export const MJCheckbox: React.FC<MJCheckboxProps> = ({
   onChange,
   errorMessage,
   disabled = false,
+  loading = false,
   className,
   ...props
 }) => {
   const [isClicked, setIsClicked] = useState(false);
 
   const handleClick = useCallback(() => {
-    if (!disabled) setIsClicked(true);
-  }, [disabled]);
+    if (!disabled && !loading) setIsClicked(true);
+  }, [disabled, loading]);
 
   const handleAnimationEnd = useCallback(() => {
     setIsClicked(false);
@@ -41,6 +44,7 @@ export const MJCheckbox: React.FC<MJCheckboxProps> = ({
   const itemClassName = [
     styles.optionItem,
     isClicked ? styles.itemPulse : '',
+    loading ? styles.loading : '',
   ]
     .filter(Boolean)
     .join(' ');
@@ -56,19 +60,34 @@ export const MJCheckbox: React.FC<MJCheckboxProps> = ({
         className={itemClassName}
         onAnimationEnd={handleAnimationEnd}
         onClick={handleClick}
+        aria-busy={loading}
       >
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={onChange}
-          disabled={disabled}
-          className={styles.input}
-          aria-checked={checked}
-          {...props}
-        />
-        <span className={styles.box} aria-hidden />
-        {label != null && label !== '' && (
-          <span className={styles.optionLabel}>{label}</span>
+        {loading ? (
+          <>
+            <span className={styles.boxSkeleton} aria-hidden />
+            <span className={styles.labelSkeletonWrapper}>
+              <span className={styles.labelPlaceholder}>
+                {label ?? '\u00A0'}
+              </span>
+              <span className={styles.labelSkeleton} aria-hidden />
+            </span>
+          </>
+        ) : (
+          <>
+            <input
+              type="checkbox"
+              checked={checked}
+              onChange={onChange}
+              disabled={disabled}
+              className={styles.input}
+              aria-checked={checked}
+              {...props}
+            />
+            <span className={styles.box} aria-hidden />
+            {label != null && label !== '' && (
+              <span className={styles.optionLabel}>{label}</span>
+            )}
+          </>
         )}
       </label>
       <div className={styles.errorMessageWrapper}>

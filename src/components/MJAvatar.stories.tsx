@@ -68,6 +68,14 @@ export const InitialsEnglish: Story = {
   },
 };
 
+/** スケルトンローディング */
+export const Skeleton: Story = {
+  args: {
+    loading: true,
+    size: 'md',
+  },
+};
+
 /** サイズバリエーション */
 export const Sizes: Story = {
   render: () => (

@@ -2,15 +2,44 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useState, useMemo } from 'react';
 import type { SortDirection } from './MJTable';
 import { MJTable } from './MJTable';
+import { MJTypography } from './MJTypography';
 
 type SampleRow = {
-  id: string;
-  name: string;
-  role: string;
-  status: string;
+  id: React.ReactNode;
+  name: React.ReactNode;
+  role: React.ReactNode;
+  status: React.ReactNode;
 };
 
 const sampleData: SampleRow[] = [
+  { 
+    id: <MJTypography variant="small">1</MJTypography>, 
+    name: <MJTypography variant="small">田中 太郎</MJTypography>, 
+    role: <MJTypography variant="small">エンジニア</MJTypography>, 
+    status: <MJTypography variant="small">在籍</MJTypography> 
+  },
+  { 
+    id: <MJTypography variant="small">2</MJTypography>, 
+    name: <MJTypography variant="small">山田 花子</MJTypography>, 
+    role: <MJTypography variant="small">デザイナー</MJTypography>, 
+    status: <MJTypography variant="small">在籍</MJTypography> 
+  },
+  { 
+    id: <MJTypography variant="small">3</MJTypography>, 
+    name: <MJTypography variant="small">佐藤 一郎</MJTypography>, 
+    role: <MJTypography variant="small">マネージャー</MJTypography>, 
+    status: <MJTypography variant="small">休暇</MJTypography> 
+  },
+  { 
+    id: <MJTypography variant="small">4</MJTypography>, 
+    name: <MJTypography variant="small">鈴木 次郎</MJTypography>, 
+    role: <MJTypography variant="small">エンジニア</MJTypography>, 
+    status: <MJTypography variant="small">在籍</MJTypography> 
+  },
+];
+
+/** loading プロップ用：文字列データでスケルトン幅を合わせる */
+const sampleDataStrings = [
   { id: '1', name: '田中 太郎', role: 'エンジニア', status: '在籍' },
   { id: '2', name: '山田 花子', role: 'デザイナー', status: '在籍' },
   { id: '3', name: '佐藤 一郎', role: 'マネージャー', status: '休暇' },
@@ -37,6 +66,10 @@ const meta: Meta<typeof MJTable> = {
       control: 'radio',
       options: ['asc', 'desc'],
       description: 'ソート方向',
+    },
+    loading: {
+      control: 'boolean',
+      description: '読み込み中（ヘッダー・セルを MJTypography のスケルトン表示）',
     },
   },
   decorators: [
@@ -84,7 +117,7 @@ export const Default: Story = {
           setSortKey(key);
           setSortDirection(dir);
         }}
-        getRowKey={(row) => row.id}
+        getRowKey={(_row, index) => index}
       />
     );
   },
@@ -99,6 +132,16 @@ export const NotSortable: Story = {
       { key: 'status', label: 'ステータス', sortable: false },
     ],
     data: sampleData,
-    getRowKey: (row: SampleRow) => row.id,
+    getRowKey: (_row, index) => index,
+  },
+};
+
+/** 読み込み中（スケルトン） */
+export const Loading: Story = {
+  args: {
+    columns,
+    data: sampleDataStrings,
+    getRowKey: (_row, index) => index,
+    loading: true,
   },
 };
