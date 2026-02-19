@@ -1,14 +1,10 @@
-import { style, styleVariants, keyframes } from '@vanilla-extract/css';
-import { vars } from '../../constants/styles/vars.css';
+import { style, styleVariants } from '@vanilla-extract/css';
 import { createGlobalTheme } from '@vanilla-extract/css';
-
-/* スケルトンローディング */
-const skeleton = keyframes({
-  '0%': { backgroundPosition: '-200% 0' },
-  '100%': { backgroundPosition: '200% 0' },
-});
-
-const skeletonGradient = `linear-gradient(to right, ${vars.color.surface} 0%, #333 50%, ${vars.color.surface} 100%)`;
+import {
+  skeletonGradient,
+  skeletonAnimation,
+  skeletonBackgroundSize,
+} from '../../constants/styles/skeleton.css';
 
 /** ローディング時のラッパー（テキスト枠保持 + スケルトン重ね用。幅は文字数・高さは行に合わせる） */
 export const loadingWrapper = style({
@@ -32,8 +28,8 @@ export const skeletonBar = style({
   width: '100%',
   borderRadius: 4,
   background: skeletonGradient,
-  backgroundSize: '200% 100%',
-  animation: `${skeleton} 1.5s ease-in-out infinite`,
+  backgroundSize: skeletonBackgroundSize,
+  animation: skeletonAnimation,
 });
 
 

@@ -1,11 +1,10 @@
-import { style, styleVariants, keyframes } from '@vanilla-extract/css';
+import { style, styleVariants } from '@vanilla-extract/css';
 import { vars } from '../../constants/styles/vars.css';
-
-/* スケルトンローディング */
-const skeleton = keyframes({
-  '0%': { backgroundPosition: '-200% 0' },
-  '100%': { backgroundPosition: '200% 0' },
-});
+import {
+  skeletonGradient,
+  skeletonAnimation,
+  skeletonBackgroundSize,
+} from '../../constants/styles/skeleton.css';
 
 export const loadingTextareaWrapper = style({
   position: 'relative',
@@ -17,9 +16,9 @@ export const loadingSkeleton = style({
   position: 'absolute',
   inset: 0,
   borderRadius: 'inherit',
-  background: `linear-gradient(to right, ${vars.color.surface} 0%, #333 50%, ${vars.color.surface} 100%)`,
-  backgroundSize: '200% 100%',
-  animation: `${skeleton} 1.5s ease-in-out infinite`,
+  background: skeletonGradient,
+  backgroundSize: skeletonBackgroundSize,
+  animation: skeletonAnimation,
   pointerEvents: 'none',
 });
 
@@ -29,8 +28,6 @@ export const loading = style({
   pointerEvents: 'none',
   opacity: 0.8,
 });
-
-const skeletonGradient = `linear-gradient(to right, ${vars.color.surface} 0%, #333 50%, ${vars.color.surface} 100%)`;
 
 /** ローディング時のラベル領域（枠保持用の非表示テキスト + スケルトン） */
 export const labelSkeletonWrapper = style({
@@ -58,8 +55,8 @@ export const labelSkeleton = style({
   maxWidth: '100%',
   borderRadius: 4,
   background: skeletonGradient,
-  backgroundSize: '200% 100%',
-  animation: `${skeleton} 1.5s ease-in-out infinite`,
+  backgroundSize: skeletonBackgroundSize,
+  animation: skeletonAnimation,
 });
 
 /* Base textarea（共通） */

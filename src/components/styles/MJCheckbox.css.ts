@@ -1,5 +1,10 @@
 import { style, keyframes } from '@vanilla-extract/css';
 import { vars } from '../../constants/styles/vars.css';
+import {
+  skeletonGradient,
+  skeletonAnimation,
+  skeletonBackgroundSize,
+} from '../../constants/styles/skeleton.css';
 
 const boxSize = 18;
 
@@ -13,14 +18,6 @@ export const itemPulse = style({
   animation: `${brightnessPulse} 0.8s ease`,
 });
 
-/* スケルトンローディング（MJAvatar 同様のグラデーションアニメーション） */
-const skeleton = keyframes({
-  '0%': { backgroundPosition: '-200% 0' },
-  '100%': { backgroundPosition: '200% 0' },
-});
-
-const skeletonGradient = `linear-gradient(to right, ${vars.color.surface} 0%, #333 50%, ${vars.color.surface} 100%)`;
-
 /** チェックボックス枠のスケルトン */
 export const boxSkeleton = style({
   flexShrink: 0,
@@ -30,8 +27,8 @@ export const boxSkeleton = style({
   minHeight: boxSize,
   borderRadius: vars.border.radiusSm,
   background: skeletonGradient,
-  backgroundSize: '200% 100%',
-  animation: `${skeleton} 1.5s ease-in-out infinite`,
+  backgroundSize: skeletonBackgroundSize,
+  animation: skeletonAnimation,
 });
 
 /** ローディング時のラベル領域（枠保持用の非表示テキスト + スケルトン） */
@@ -60,8 +57,8 @@ export const labelSkeleton = style({
   minWidth: 80,
   borderRadius: 4,
   background: skeletonGradient,
-  backgroundSize: '200% 100%',
-  animation: `${skeleton} 1.5s ease-in-out infinite`,
+  backgroundSize: skeletonBackgroundSize,
+  animation: skeletonAnimation,
 });
 
 /** ローディング時はクリック無効 */

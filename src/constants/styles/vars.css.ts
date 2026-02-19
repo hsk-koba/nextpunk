@@ -80,4 +80,12 @@ export const vars = createGlobalTheme(':root', {
     viewDuration: '0.3s',
     viewTiming: 'ease-in-out',
   },
+
+  /* スケルトンローディング（MJ コンポーネント共通） */
+  skeleton: {
+    duration: '1.5s',
+    easing: 'ease-in-out',
+    midColor: '#333',
+    backgroundSize: '200% 100%',
+  },
 });
