@@ -16,7 +16,7 @@ const defaultAccountInfo = {
 
 const meta: Meta<typeof MJHeader> = {
   component: MJHeader,
-  title: 'Components/MJHeader',
+  title: 'Organisms/MJHeader',
   tags: ['autodocs'],
   argTypes: {
     logoText: {

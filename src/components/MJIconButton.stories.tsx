@@ -13,7 +13,7 @@ import { MJIconButton } from './MJIconButton';
 
 const meta: Meta<typeof MJIconButton> = {
   component: MJIconButton,
-  title: 'Components/MJIconButton',
+  title: 'Atoms/MJIconButton',
   tags: ['autodocs'],
   argTypes: {
     variant: {

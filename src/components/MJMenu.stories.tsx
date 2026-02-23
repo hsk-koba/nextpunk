@@ -7,7 +7,7 @@ import type { MJMenuItem } from './MJMenu';
 
 const meta: Meta<typeof MJMenu> = {
   component: MJMenu,
-  title: 'Components/MJMenu',
+  title: 'Molecules/MJMenu',
   tags: ['autodocs'],
   argTypes: {
     open: { control: 'boolean', description: '開閉状態（制御）' },

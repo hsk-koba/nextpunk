@@ -3,7 +3,7 @@ import { MJAvatar } from './MJAvatar';
 
 const meta: Meta<typeof MJAvatar> = {
   component: MJAvatar,
-  title: 'Components/MJAvatar',
+  title: 'Atoms/MJAvatar',
   tags: ['autodocs'],
   argTypes: {
     src: {

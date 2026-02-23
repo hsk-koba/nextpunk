@@ -9,7 +9,7 @@ const defaultOptions = [
 
 const meta: Meta<typeof MJSelect> = {
   component: MJSelect,
-  title: 'Components/MJSelect',
+  title: 'Molecules/MJSelect',
   tags: ['autodocs'],
   argTypes: {
     variant: {

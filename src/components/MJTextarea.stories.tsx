@@ -3,7 +3,7 @@ import { MJTextarea } from './MJTextarea';
 
 const meta: Meta<typeof MJTextarea> = {
   component: MJTextarea,
-  title: 'Components/MJTextarea',
+  title: 'Molecules/MJTextarea',
   tags: ['autodocs'],
   argTypes: {
     variant: {

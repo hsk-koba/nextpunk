@@ -4,7 +4,7 @@ import { MJDatePicker } from './MJDatePicker';
 
 const meta: Meta<typeof MJDatePicker> = {
   component: MJDatePicker,
-  title: 'Components/MJDatePicker',
+  title: 'Molecules/MJDatePicker',
   tags: ['autodocs'],
   argTypes: {
     variant: {

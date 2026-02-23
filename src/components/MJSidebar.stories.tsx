@@ -6,7 +6,7 @@ import type { MJSidebarItemProps } from './MJSidebar';
 
 const meta: Meta<typeof MJSidebar> = {
   component: MJSidebar,
-  title: 'Components/MJSidebar',
+  title: 'Organisms/MJSidebar',
   tags: ['autodocs'],
   argTypes: {
     logoText: { control: 'text', description: 'ロゴ横のテキスト' },

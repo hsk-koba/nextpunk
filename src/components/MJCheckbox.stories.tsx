@@ -4,7 +4,7 @@ import { MJCheckbox } from './MJCheckbox';
 
 const meta: Meta<typeof MJCheckbox> = {
   component: MJCheckbox,
-  title: 'Components/MJCheckbox',
+  title: 'Atoms/MJCheckbox',
   tags: ['autodocs'],
   argTypes: {
     label: {

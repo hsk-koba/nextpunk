@@ -54,7 +54,7 @@ const columns = [
 
 const meta: Meta<typeof MJTable> = {
   component: MJTable,
-  title: 'Components/MJTable',
+  title: 'Organisms/MJTable',
   tags: ['autodocs'],
   argTypes: {
     sortKey: {

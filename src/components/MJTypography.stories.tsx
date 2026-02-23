@@ -3,7 +3,7 @@ import { MJTypography } from './MJTypography';
 
 const meta: Meta<typeof MJTypography> = {
   component: MJTypography,
-  title: 'Components/MJTypography',
+  title: 'Atoms/MJTypography',
   tags: ['autodocs'],
   argTypes: {
     variant: {

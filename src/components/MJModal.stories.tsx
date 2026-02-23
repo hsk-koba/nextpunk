@@ -6,7 +6,7 @@ import { MJButton } from './MJButton';
 
 const meta: Meta<typeof MJModal> = {
   component: MJModal,
-  title: 'Components/MJModal',
+  title: 'Molecules/MJModal',
   tags: ['autodocs'],
   argTypes: {
     open: {

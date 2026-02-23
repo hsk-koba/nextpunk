@@ -10,7 +10,7 @@ const defaultOptions = [
 
 const meta: Meta<typeof MJRadio> = {
   component: MJRadio,
-  title: 'Components/MJRadio',
+  title: 'Atoms/MJRadio',
   tags: ['autodocs'],
   argTypes: {
     name: {

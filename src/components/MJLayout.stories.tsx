@@ -5,7 +5,7 @@ import type { MJSidebarItemProps } from './MJSidebar';
 
 const meta: Meta<typeof MJLayout> = {
   component: MJLayout,
-  title: 'Components/MJLayout',
+  title: 'Organisms/MJLayout',
   tags: ['autodocs'],
   parameters: {
     docs: {

@@ -111,6 +111,8 @@ export interface MJDatePickerProps {
   disabled?: boolean;
   loading?: boolean;
   placeholder?: string;
+  /** 必須（フォームバリデーション・aria-required） */
+  required?: boolean;
 }
 
 export const MJDatePicker: React.FC<MJDatePickerProps> = ({
@@ -126,6 +128,7 @@ export const MJDatePicker: React.FC<MJDatePickerProps> = ({
   disabled = false,
   loading = false,
   placeholder = '日付を選択',
+  required = false,
 }) => {
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const closeEndFiredRef = useRef(false);
@@ -329,6 +332,7 @@ export const MJDatePicker: React.FC<MJDatePickerProps> = ({
             value={displayValue}
             readOnly
             placeholder={placeholder}
+            required={required}
           />
         </div>
       </div>

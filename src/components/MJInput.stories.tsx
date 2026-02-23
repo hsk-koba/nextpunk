@@ -3,7 +3,7 @@ import { MJInput } from './MJInput';
 
 const meta: Meta<typeof MJInput> = {
   component: MJInput,
-  title: 'Components/MJInput',
+  title: 'Atoms/MJInput',
   tags: ['autodocs'],
   argTypes: {
     variant: {

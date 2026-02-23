@@ -5,7 +5,7 @@ import { MJButton } from './MJButton';
 
 const meta: Meta<typeof MJButton> = {
   component: MJButton,
-  title: 'Components/MJButton',
+  title: 'Atoms/MJButton',
   tags: ['autodocs'],
   argTypes: {
     variant: {
