@@ -97,6 +97,7 @@ export const base = style({
   textTransform: 'none',
   transition: vars.transition.fast,
   boxSizing: 'border-box',
+  boxShadow: vars.shadow.xs,
   selectors: {
     '&:disabled': {
       cursor: 'not-allowed',

@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MJInput } from './MJInput';
+import React, { useState } from 'react';
+import { MJDatePicker } from './MJDatePicker';
 
-const meta: Meta<typeof MJInput> = {
-  component: MJInput,
-  title: 'Components/MJInput',
+const meta: Meta<typeof MJDatePicker> = {
+  component: MJDatePicker,
+  title: 'Components/MJDatePicker',
   tags: ['autodocs'],
   argTypes: {
     variant: {
@@ -16,10 +17,6 @@ const meta: Meta<typeof MJInput> = {
       options: ['sm', 'md', 'lg'],
       description: 'サイズ',
     },
-    placeholder: {
-      control: 'text',
-      description: 'プレースホルダー',
-    },
     disabled: {
       control: 'boolean',
       description: '無効化',
@@ -30,12 +27,12 @@ const meta: Meta<typeof MJInput> = {
     },
     label: {
       control: 'text',
-      description: 'ラベル（表示する場合はストーリー側でラップ）',
+      description: 'ラベル',
     },
   },
   decorators: [
     (Story) => (
-      <div style={{ padding: 24, minHeight: 120, maxWidth: 400 }}>
+      <div style={{ padding: 24, minHeight: 120, maxWidth: 400,  }}>
         <Story />
       </div>
     ),
@@ -44,14 +41,23 @@ const meta: Meta<typeof MJInput> = {
 
 export default meta;
 
-type Story = StoryObj<typeof MJInput>;
+type Story = StoryObj<typeof MJDatePicker>;
 
 /** プライマリ（デフォルト） */
 export const Primary: Story = {
   args: {
     variant: 'primary',
-    label: 'メールアドレス',
-    placeholder: '入力してください',
+    label: '日付',
+    value: '',
+  },
+};
+
+/** 初期値あり */
+export const WithValue: Story = {
+  args: {
+    variant: 'primary',
+    label: '日付',
+    value: new Date('2025-02-16'),
   },
 };
 
@@ -59,7 +65,8 @@ export const Primary: Story = {
 export const Outline: Story = {
   args: {
     variant: 'outline',
-    placeholder: 'アウトライン',
+    label: '日付',
+    value: '',
   },
 };
 
@@ -67,7 +74,8 @@ export const Outline: Story = {
 export const Text: Story = {
   args: {
     variant: 'text',
-    placeholder: 'テキストバリアント',
+    label: '日付',
+    value: '',
   },
 };
 
@@ -75,8 +83,8 @@ export const Text: Story = {
 export const Danger: Story = {
   args: {
     variant: 'danger',
-    placeholder: 'エラーがあります',
-    errorMessage: 'エラーは絶対必須です',
+    label: '日付',
+    errorMessage: '日付を選択してください',
   },
 };
 
@@ -84,7 +92,8 @@ export const Danger: Story = {
 export const Default: Story = {
   args: {
     variant: 'default',
-    placeholder: 'デフォルト',
+    label: '日付',
+    value: '',
   },
 };
 
@@ -93,7 +102,8 @@ export const SizeSmall: Story = {
   args: {
     variant: 'primary',
     size: 'sm',
-    placeholder: 'Small',
+    label: '日付',
+    value: '',
   },
 };
 
@@ -102,7 +112,8 @@ export const SizeLarge: Story = {
   args: {
     variant: 'primary',
     size: 'lg',
-    placeholder: 'Large',
+    label: '日付',
+    value: '',
   },
 };
 
@@ -110,7 +121,8 @@ export const SizeLarge: Story = {
 export const Disabled: Story = {
   args: {
     variant: 'primary',
-    placeholder: '無効化されています',
+    label: '日付',
+    value: new Date('2025-02-16'),
     disabled: true,
   },
 };
@@ -119,18 +131,41 @@ export const Disabled: Story = {
 export const Loading: Story = {
   args: {
     variant: 'primary',
-    label: 'メールアドレス',
-    placeholder: '読み込み中…',
+    label: '日付',
     loading: true,
   },
 };
 
-/** ラベル付き（tiny の MJTypography） */
-export const WithLabel: Story = {
+/** min / max で範囲制限 */
+export const MinMax: Story = {
   args: {
     variant: 'primary',
-    label: 'メールアドレス',
-    placeholder: 'example@octohub.com',
+    label: '日付（2024年〜2026年）',
+    min: new Date('2024-01-01'),
+    max: new Date('2026-12-31'),
+    value: new Date('2025-06-15'),
+  },
+};
+
+/** 制御された値（選択した日付を表示） */
+export const Controlled: Story = {
+  render: function ControlledStory() {
+    const [date, setDate] = useState<Date | null>(new Date('2025-02-16'));
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <MJDatePicker
+          label="日付を選択"
+          value={date}
+          onChange={setDate}
+          variant="primary"
+        />
+        {date != null && (
+          <p style={{ color: '#999', fontSize: 14 }}>
+            選択中: {date.toLocaleDateString('ja-JP')}
+          </p>
+        )}
+      </div>
+    );
   },
 };
 
@@ -138,11 +173,11 @@ export const WithLabel: Story = {
 export const AllVariants: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <MJInput variant="primary" placeholder="primary" />
-      <MJInput variant="outline" placeholder="outline" />
-      <MJInput variant="text" placeholder="text" />
-      <MJInput variant="danger" placeholder="danger" />
-      <MJInput variant="default" placeholder="default" />
+      <MJDatePicker variant="primary" label="primary" />
+      <MJDatePicker variant="outline" label="outline" />
+      <MJDatePicker variant="text" label="text" />
+      <MJDatePicker variant="danger" label="danger" />
+      <MJDatePicker variant="default" label="default" />
     </div>
   ),
 };
@@ -151,9 +186,9 @@ export const AllVariants: Story = {
 export const AllSizes: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <MJInput size="sm" placeholder="Small" />
-      <MJInput size="md" placeholder="Medium" />
-      <MJInput size="lg" placeholder="Large" />
+      <MJDatePicker size="sm" label="Small" />
+      <MJDatePicker size="md" label="Medium" />
+      <MJDatePicker size="lg" label="Large" />
     </div>
   ),
 };

@@ -82,6 +82,7 @@ const iconButtonBase = {
   flexShrink: 0,
   verticalAlign: 'middle' as const,
   lineHeight: 1,
+  boxShadow: vars.shadow.xs,
   selectors: {
     '&:disabled': {
       cursor: 'not-allowed',

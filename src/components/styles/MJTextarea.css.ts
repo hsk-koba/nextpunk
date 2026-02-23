@@ -71,6 +71,7 @@ export const base = style({
   minHeight: 80,
   width: '100%',
   boxSizing: 'border-box',
+  boxShadow: vars.shadow.xs,
   transition: vars.transition.fast,
   resize: 'none',
   display: 'block',

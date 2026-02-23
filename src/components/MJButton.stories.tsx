@@ -47,7 +47,7 @@ const meta: Meta<typeof MJButton> = {
   },
   decorators: [
     (Story) => (
-      <div style={{ padding: 24, background: '#0a0a0a', minHeight: 120 }}>
+      <div style={{ padding: 24, minHeight: 120 }}>
         <Story />
       </div>
     ),

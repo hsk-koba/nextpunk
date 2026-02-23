@@ -31,7 +31,7 @@ const meta: Meta<typeof MJHeader> = {
   },
   decorators: [
     (Story) => (
-      <div style={{ background: '#0a0a0a', minHeight: 120 }}>
+      <div style={{ minHeight: 120 }}>
         <Story />
       </div>
     ),

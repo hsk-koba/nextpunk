@@ -77,7 +77,6 @@ const meta: Meta<typeof MJTable> = {
       <div
         style={{
           padding: 24,
-          background: '#0a0a0a',
           minHeight: 200,
           maxWidth: 600,
         }}

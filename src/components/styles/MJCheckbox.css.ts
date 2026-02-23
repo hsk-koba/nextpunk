@@ -115,6 +115,7 @@ export const box = style({
   borderRadius: vars.border.radiusSm,
   border: `2px solid ${vars.color.border}`,
   backgroundColor: 'transparent',
+  boxShadow: vars.shadow.xs,
   transition: vars.transition.fast,
   display: 'flex',
   alignItems: 'center',

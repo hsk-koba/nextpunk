@@ -14,6 +14,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@storybook/test": "^8.6.15",
+    "@storybook/theming": "^8.6.14",
     "@vanilla-extract/css": "^1.18.0",
     "@yargram/core": "^1.0.0",
     "@yargram/react": "^1.0.3",

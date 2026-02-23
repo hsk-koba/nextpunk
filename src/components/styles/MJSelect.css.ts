@@ -78,6 +78,7 @@ export const base = style({
   minHeight: 40,
   width: '100%',
   boxSizing: 'border-box',
+  boxShadow: vars.shadow.xs,
   transition: vars.transition.fast,
   cursor: 'pointer',
   appearance: 'none',

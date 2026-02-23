@@ -67,6 +67,7 @@ export const vars = createGlobalTheme(':root', {
 
   /* シャドウ - Shadows */
   shadow: {
+    xs: '0 1px 2px rgba(0,0,0,0.12)',
     sm: '0 1px 2px rgba(123, 123, 123, 0.3)',
     md: '0 4px 6px rgba(123, 123, 123, 0.3)',
     lg: '0 10px 15px rgba(123, 123, 123, 0.3)',

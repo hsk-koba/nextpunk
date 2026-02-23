@@ -37,7 +37,6 @@ const meta: Meta<typeof MJCheckbox> = {
       <div
         style={{
           padding: 24,
-          background: '#0a0a0a',
           minHeight: 120,
           maxWidth: 400,
         }}

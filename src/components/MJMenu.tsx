@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useRef,
   useLayoutEffect,
+  useEffect,
   cloneElement,
   isValidElement,
 } from 'react';
@@ -85,7 +86,9 @@ export const MJMenu: React.FC<MJMenuProps> = ({
   className,
 }) => {
   const anchorRef = useRef<HTMLElement | null>(null);
+  const closeEndFiredRef = useRef(false);
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+  const [isClosing, setIsClosing] = useState(false);
   const [position, setPosition] = useState<{
     top: number;
     left: number;
@@ -101,9 +104,19 @@ export const MJMenu: React.FC<MJMenuProps> = ({
     if (!isControlled) setUncontrolledOpen(true);
   }, [isControlled]);
 
-  const handleClose = useCallback(() => {
+  /** 閉じる開始（アニメーション用） */
+  const handleCloseRequest = useCallback(() => {
+    closeEndFiredRef.current = false;
+    setIsClosing(true);
+  }, []);
+
+  /** アニメーション終了後に実際に閉じる（1回だけ） */
+  const handleCloseEnd = useCallback(() => {
+    if (closeEndFiredRef.current) return;
+    closeEndFiredRef.current = true;
     if (!isControlled) setUncontrolledOpen(false);
     onClose?.();
+    setIsClosing(false);
   }, [isControlled, onClose]);
 
   const updatePosition = useCallback(() => {
@@ -131,10 +144,14 @@ export const MJMenu: React.FC<MJMenuProps> = ({
     });
   }, [anchorOrigin, transformOrigin]);
 
+  useEffect(() => {
+    if (!open) setIsClosing(false);
+  }, [open]);
+
   useLayoutEffect(() => {
-    if (open) updatePosition();
-    else setPosition(null);
-  }, [open, updatePosition]);
+    if (open && !isClosing) updatePosition();
+    if (!open && !isClosing) setPosition(null);
+  }, [open, isClosing, updatePosition]);
 
   const triggerChild = React.Children.only(children);
   const triggerProps: Record<string, unknown> = {
@@ -154,33 +171,43 @@ export const MJMenu: React.FC<MJMenuProps> = ({
     (e: React.KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        handleClose();
+        handleCloseRequest();
       }
     },
-    [handleClose],
+    [handleCloseRequest],
   );
 
   const handleItemClick = useCallback(
     (item: MJMenuItemBase) => {
       if (item.disabled) return;
       item.onClick?.();
-      handleClose();
+      handleCloseRequest();
     },
-    [handleClose],
+    [handleCloseRequest],
   );
 
+  const handleBackdropAnimationEnd = useCallback(
+    (e: React.AnimationEvent) => {
+      if (e.target !== e.currentTarget) return;
+      if (isClosing) handleCloseEnd();
+    },
+    [isClosing, handleCloseEnd],
+  );
+
+  const showPortal = (open || isClosing) && typeof document !== 'undefined' && position;
   const menuContent =
-    open && typeof document !== 'undefined' && position ? (
+    showPortal ? (
       <>
         <div
-          className={styles.backdrop}
-          onClick={handleClose}
+          className={[styles.backdrop, isClosing ? styles.backdropClosing : styles.backdropOpen].join(' ')}
+          onClick={handleCloseRequest}
+          onAnimationEnd={handleBackdropAnimationEnd}
           onKeyDown={handleKeyDown}
           role="presentation"
           aria-hidden
         />
         <div
-          className={[styles.paper, className].filter(Boolean).join(' ')}
+          className={[styles.paper, isClosing ? styles.paperClosing : styles.paperOpen, className].filter(Boolean).join(' ')}
           style={{
             top: position.top,
             left: position.left,
@@ -190,6 +217,10 @@ export const MJMenu: React.FC<MJMenuProps> = ({
           }}
           role="menu"
           onKeyDown={handleKeyDown}
+          onAnimationEnd={(e) => {
+            if (e.target !== e.currentTarget) return;
+            if (isClosing) handleCloseEnd();
+          }}
         >
           <ul className={styles.list}>
             {items.map((item, index) =>

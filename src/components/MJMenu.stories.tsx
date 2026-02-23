@@ -26,7 +26,6 @@ const meta: Meta<typeof MJMenu> = {
       <div
         style={{
           padding: 48,
-          background: '#0a0a0a',
           minHeight: 200,
         }}
       >

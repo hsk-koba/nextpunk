@@ -71,6 +71,7 @@ export const paper = style({
   borderRadius: `${vars.border.radiusMd}`,
   padding: vars.spacing.md,
   color: vars.color.textPrimary,
+  boxShadow: vars.shadow.xs,
 });
 
 export const paperOpen = style({

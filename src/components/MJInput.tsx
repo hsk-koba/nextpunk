@@ -25,6 +25,7 @@ export const MJInput: React.FC<MJInputProps> = ({
   errorMessage,
   loading = false,
   disabled,
+  type = 'text',
   ...props
 }) => {
   const inputClassName = [
@@ -55,7 +56,7 @@ export const MJInput: React.FC<MJInputProps> = ({
       {loading ? (
         <div className={styles.loadingInputWrapper}>
           <input
-            type="text"
+            type={type}
             className={inputClassName}
             disabled={isDisabled}
             aria-busy={loading}
@@ -66,7 +67,7 @@ export const MJInput: React.FC<MJInputProps> = ({
           <span className={styles.loadingSkeleton} aria-hidden />
         </div>
       ) : (
-        <input type="text" className={inputClassName} disabled={disabled} {...props} />
+        <input type={type} className={inputClassName} disabled={disabled} {...props} />
       )}
       {errorMessage != null && errorMessage !== '' && (
         <div className={styles.errorMessageWrapper}>

@@ -150,6 +150,7 @@ export const circle = style({
   borderRadius: '50%',
   border: `2px solid ${vars.color.border}`,
   backgroundColor: 'transparent',
+  boxShadow: vars.shadow.xs,
   transition: vars.transition.fast,
   display: 'flex',
   alignItems: 'center',

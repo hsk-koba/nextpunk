@@ -13,6 +13,7 @@ export const table = style({
   borderCollapse: 'collapse',
   fontFamily: vars.font.familyPrimary,
   fontSize: vars.font.sizeSm,
+  boxShadow: vars.shadow.xs,
 });
 
 /* ヘッダー行（白背景） */

@@ -26,7 +26,7 @@ const meta: Meta<typeof MJTypography> = {
   },
   decorators: [
     (Story) => (
-      <div style={{ padding: 24, background: '#0a0a0a', color: '#fff' }}>
+      <div style={{ padding: 24, color: '#fff' }}>
         <Story />
       </div>
     ),

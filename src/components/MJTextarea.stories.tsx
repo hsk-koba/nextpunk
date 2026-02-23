@@ -39,7 +39,7 @@ const meta: Meta<typeof MJTextarea> = {
   },
   decorators: [
     (Story) => (
-      <div style={{ padding: 24, background: '#0a0a0a', minHeight: 120, maxWidth: 400 }}>
+      <div style={{ padding: 24, minHeight: 120, maxWidth: 400 }}>
         <Story />
       </div>
     ),
