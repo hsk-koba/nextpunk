@@ -6,6 +6,8 @@ import { YargramProvider } from '@yargram/react';
 import * as styles from './styles/MJLayout.css';
 import { FileText, Home, Settings } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
+import { OverlayProvider } from './MJOverlayLoading';
+import { AlertProvider } from './MJAlert';
 
 export interface MJLayoutProps {
   /** メインコンテンツ */
@@ -65,7 +67,9 @@ export const MJLayout: React.FC<MJLayoutProps> = ({
             productionOnly: process.env.NODE_ENV === 'production',
           }}
         >
-            <div className={[styles.root, className].filter(Boolean).join(' ')}>
+          <OverlayProvider>
+            <AlertProvider>
+              <div className={[styles.root, className].filter(Boolean).join(' ')}>
                 <MJSidebar 
                     items={sidebarItems} 
                     accountInfo={accountInfo} 
@@ -78,7 +82,9 @@ export const MJLayout: React.FC<MJLayoutProps> = ({
                 <main className={[styles.main, mainClassName].filter(Boolean).join(' ')}>
                     {children}
                 </main>
-            </div>
+              </div>
+            </AlertProvider>
+          </OverlayProvider>
         </YargramProvider>
     )
 };
