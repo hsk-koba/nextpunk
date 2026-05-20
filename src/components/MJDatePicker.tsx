@@ -2,17 +2,18 @@
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { usePopover } from '@/hooks/usePopover';
+import { cn } from '@/utils/cn';
 import { MJInput } from './MJInput';
 import { MJButton } from './MJButton';
 import { MJTypography } from './MJTypography';
+import type { MJFieldSize, MJFieldVariant } from './types/variants';
 import * as styles from './styles/MJDatePicker.css';
 
-const MENU_GAP = 4;
 const WEEKDAYS_JA = ['日', '月', '火', '水', '木', '金', '土'];
 
-/** YYYY-MM-DD にフォーマット */
 function toYYYYMMDD(value: Date | string | null | undefined): string {
   if (value == null) return '';
   const d = typeof value === 'string' ? new Date(value) : value;
@@ -47,7 +48,6 @@ function addMonths(d: Date, n: number): Date {
   return r;
 }
 
-/** カレンダーに表示する1日分 */
 interface CalendarDay {
   date: Date;
   isCurrentMonth: boolean;
@@ -56,16 +56,14 @@ interface CalendarDay {
   isDisabled: boolean;
 }
 
-/** 表示月の日付リスト（前月・翌月のパディング含む、6週×7日=42） */
 function getCalendarDays(
   currentMonth: Date,
   selected: Date | null,
   min: Date | null,
-  max: Date | null
+  max: Date | null,
 ): CalendarDay[] {
   const start = startOfMonth(currentMonth);
   const dayOfWeek = start.getDay();
-  const daysInMonth = new Date(start.getFullYear(), start.getMonth() + 1, 0).getDate();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -103,15 +101,14 @@ export interface MJDatePickerProps {
   onChange?: (date: Date | null) => void;
   min?: Date | string;
   max?: Date | string;
-  variant?: 'primary' | 'outline' | 'text' | 'danger' | 'default';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: MJFieldVariant;
+  size?: MJFieldSize;
   className?: string;
   label?: string;
   errorMessage?: string;
   disabled?: boolean;
   loading?: boolean;
   placeholder?: string;
-  /** 必須（フォームバリデーション・aria-required） */
   required?: boolean;
 }
 
@@ -131,21 +128,10 @@ export const MJDatePicker: React.FC<MJDatePickerProps> = ({
   required = false,
 }) => {
   const anchorRef = useRef<HTMLDivElement | null>(null);
-  const closeEndFiredRef = useRef(false);
-  const [open, setOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  const [position, setPosition] = useState<{
-    top: number;
-    left: number;
-    transformOriginX: string;
-    transformOriginY: string;
-    translateX: string;
-  } | null>(null);
 
   const isControlled = value !== undefined;
   const selectedFromProp = toDate(value);
   const [internalValue, setInternalValue] = useState<Date | null>(() => toDate(value) ?? null);
-  // 表示用: 制御時は prop を優先し、未設定時は直近で選択した internalValue を表示（選択直後に日付が入るようにする）
   const selected = isControlled
     ? (selectedFromProp ?? internalValue)
     : internalValue;
@@ -158,61 +144,22 @@ export const MJDatePicker: React.FC<MJDatePickerProps> = ({
     return startOfMonth(new Date());
   });
 
-  const updatePosition = useCallback(() => {
-    const el = anchorRef.current;
-    if (!el || typeof document === 'undefined') return;
-    const rect = el.getBoundingClientRect();
-    setPosition({
-      top: rect.bottom + MENU_GAP,
-      left: rect.left,
-      transformOriginX: '0',
-      transformOriginY: '0',
-      translateX: 'none',
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!open) {
-      setIsClosing(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  useLayoutEffect(() => {
-    if (open && !isClosing) {
-      updatePosition();
-      if (selected) setCurrentMonth(startOfMonth(selected));
-    }
-    if (!open && !isClosing) setPosition(null);
-  }, [open, isClosing, updatePosition, selected]);
+  const popover = usePopover({ anchorRef });
 
   const handleOpen = useCallback(() => {
     if (disabled || loading) return;
-    setOpen(true);
-  }, [disabled, loading]);
-
-  /** 閉じる開始（アニメーション用） */
-  const handleCloseRequest = useCallback(() => {
-    closeEndFiredRef.current = false;
-    setIsClosing(true);
-  }, []);
-
-  /** アニメーション終了後に実際に閉じる */
-  const handleCloseEnd = useCallback(() => {
-    if (closeEndFiredRef.current) return;
-    closeEndFiredRef.current = true;
-    setOpen(false);
-    setIsClosing(false);
-  }, []);
+    if (selected) setCurrentMonth(startOfMonth(selected));
+    popover.handleOpen();
+  }, [disabled, loading, selected, popover]);
 
   const handleDayClick = useCallback(
     (day: CalendarDay) => {
       if (day.isDisabled) return;
       setInternalValue(day.date);
       onChange?.(day.date);
-      handleCloseRequest();
+      popover.handleCloseRequest();
     },
-    [onChange, handleCloseRequest]
+    [onChange, popover],
   );
 
   const handlePrevMonth = useCallback(() => {
@@ -225,88 +172,84 @@ export const MJDatePicker: React.FC<MJDatePickerProps> = ({
 
   const displayValue = selected ? toYYYYMMDD(selected) : '';
   const calendarDays = getCalendarDays(currentMonth, selected, min, max);
+  const paperStyle = popover.getPaperStyle();
 
-  const showPortal = (open || isClosing) && typeof document !== 'undefined' && position;
-  const popoverContent = showPortal ? (
-      <>
-        <div
-          className={[styles.backdrop, isClosing ? styles.backdropClosing : styles.backdropOpen].join(' ')}
-          onClick={handleCloseRequest}
-          onAnimationEnd={(e) => {
-            if (e.target !== e.currentTarget) return;
-            if (isClosing) handleCloseEnd();
-          }}
-          role="presentation"
-          aria-hidden
-        />
-        <div
-          className={[styles.paper, isClosing ? styles.paperClosing : styles.paperOpen].join(' ')}
-          style={{
-            top: position!.top,
-            left: position!.left,
-            ['--menu-transform-origin-x' as string]: position!.transformOriginX,
-            ['--menu-transform-origin-y' as string]: position!.transformOriginY,
-            ['--menu-translate' as string]: position!.translateX,
-          }}
-          role="dialog"
-          aria-label="日付を選択"
-          onAnimationEnd={(e) => {
-            if (e.target !== e.currentTarget) return;
-            if (isClosing) handleCloseEnd();
-          }}
-        >
-          <div className={styles.monthNav}>
-            <MJButton
-              variant="text"
-              size="sm"
-              onClick={handlePrevMonth}
-              aria-label="前月"
-            >
-              <ChevronLeft size={20} />
-            </MJButton>
-            <span className={styles.monthLabel}>{formatMonthLabel(currentMonth)}</span>
-            <MJButton
-              variant="text"
-              size="sm"
-              onClick={handleNextMonth}
-              aria-label="翌月"
-            >
-              <ChevronRight size={20} />
-            </MJButton>
-          </div>
-          <div className={styles.weekdaysRow}>
-            {WEEKDAYS_JA.map((w) => (
-              <MJTypography key={w} variant="p" className={styles.weekdayCell}>
-                {w}
-              </MJTypography>
-            ))}
-          </div>
-          <div className={styles.daysGrid}>
-            {calendarDays.map((day, i) => (
-              <button
-                key={i}
-                type="button"
-                className={[
-                  styles.dayCell,
-                  !day.isCurrentMonth && styles.dayCellOtherMonth,
-                  day.isSelected && styles.dayCellSelected,
-                  day.isCurrentMonth && day.isToday && !day.isSelected && styles.dayCellToday,
-                  day.isDisabled && styles.dayCellDisabled,
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-                onClick={() => handleDayClick(day)}
-                disabled={day.isDisabled}
-                aria-label={day.date.toLocaleDateString('ja-JP')}
-                aria-selected={day.isSelected}
-              >
-                {day.date.getDate()}
-              </button>
-            ))}
-          </div>
+  const popoverContent = popover.showPortal ? (
+    <>
+      <div
+        className={cn(
+          styles.backdrop,
+          popover.isClosing ? styles.backdropClosing : styles.backdropOpen,
+        )}
+        onClick={popover.handleCloseRequest}
+        onAnimationEnd={(e) =>
+          popover.handleOverlayAnimationEnd(e, popover.isClosing)
+        }
+        role="presentation"
+        aria-hidden
+      />
+      <div
+        className={cn(
+          styles.paper,
+          popover.isClosing ? styles.paperClosing : styles.paperOpen,
+        )}
+        style={paperStyle}
+        role="dialog"
+        aria-label="日付を選択"
+        onAnimationEnd={(e) =>
+          popover.handleOverlayAnimationEnd(e, popover.isClosing)
+        }
+      >
+        <div className={styles.monthNav}>
+          <MJButton
+            variant="text"
+            size="sm"
+            onClick={handlePrevMonth}
+            aria-label="前月"
+          >
+            <ChevronLeft size={20} />
+          </MJButton>
+          <span className={styles.monthLabel}>{formatMonthLabel(currentMonth)}</span>
+          <MJButton
+            variant="text"
+            size="sm"
+            onClick={handleNextMonth}
+            aria-label="翌月"
+          >
+            <ChevronRight size={20} />
+          </MJButton>
         </div>
-      </>
-    ) : null;
+        <div className={styles.weekdaysRow}>
+          {WEEKDAYS_JA.map((w) => (
+            <MJTypography key={w} variant="p" className={styles.weekdayCell}>
+              {w}
+            </MJTypography>
+          ))}
+        </div>
+        <div className={styles.daysGrid}>
+          {calendarDays.map((day, i) => (
+            <button
+              key={i}
+              type="button"
+              className={cn(
+                styles.dayCell,
+                !day.isCurrentMonth && styles.dayCellOtherMonth,
+                day.isSelected && styles.dayCellSelected,
+                day.isCurrentMonth && day.isToday && !day.isSelected && styles.dayCellToday,
+                day.isDisabled && styles.dayCellDisabled,
+              )}
+              onClick={() => handleDayClick(day)}
+              disabled={day.isDisabled}
+              aria-label={day.date.toLocaleDateString('ja-JP')}
+              aria-selected={day.isSelected}
+            >
+              {day.date.getDate()}
+            </button>
+          ))}
+        </div>
+      </div>
+    </>
+  ) : null;
 
   return (
     <>
@@ -317,7 +260,7 @@ export const MJDatePicker: React.FC<MJDatePickerProps> = ({
           role="button"
           tabIndex={disabled || loading ? -1 : 0}
           aria-haspopup="dialog"
-          aria-expanded={open}
+          aria-expanded={popover.open}
           style={{ cursor: disabled || loading ? 'default' : 'pointer' }}
         >
           <MJInput
@@ -336,7 +279,9 @@ export const MJDatePicker: React.FC<MJDatePickerProps> = ({
           />
         </div>
       </div>
-      {typeof document !== 'undefined' && document.body ? createPortal(popoverContent, document.body) : null}
+      {typeof document !== 'undefined' && document.body
+        ? createPortal(popoverContent, document.body)
+        : null}
     </>
   );
 };

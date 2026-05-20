@@ -3,7 +3,9 @@ import { vars } from '../../constants/styles/vars.css';
 
 /* Sidebar コンテナ */
 export const sidebar = style({
-  height: '100vh',
+  height: '100%',
+  minHeight: '100vh',
+  maxHeight: '100vh',
   backgroundColor: vars.color.background,
   borderRight: `1px solid ${vars.color.border}`,
   boxShadow: vars.shadow.md,

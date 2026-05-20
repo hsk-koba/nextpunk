@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { Home, Settings, FileText } from 'lucide-react';
+import { AppProviders } from '@/app/providers/AppProviders';
 import { MJLayout } from './MJLayout';
-import type { MJSidebarItemProps } from './MJSidebar';
 
 const meta: Meta<typeof MJLayout> = {
   component: MJLayout,
@@ -11,7 +10,7 @@ const meta: Meta<typeof MJLayout> = {
     docs: {
       description: {
         component:
-          'サイドバーとメイン領域を横並びにしたレイアウト。現在の MJLayout はサイドバーの項目・アカウント情報・選択状態を内部で固定しており、`usePathname()` の第1セグメントで selectedItemId を決めています。外から渡した items / accountInfo は型のため受け取りますが、表示には使われません。',
+          'サイドバーとメイン領域を横並びにしたレイアウト。PageContainer（Server Component）から利用し、グローバルプロバイダは root layout の AppProviders が担当します。',
       },
     },
   },
@@ -22,9 +21,11 @@ const meta: Meta<typeof MJLayout> = {
   },
   decorators: [
     (Story) => (
-      <div style={{ height: '100vh', minHeight: 400 }}>
-        <Story />
-      </div>
+      <AppProviders>
+        <div style={{ height: '100vh', minHeight: 400 }}>
+          <Story />
+        </div>
+      </AppProviders>
     ),
   ],
 };

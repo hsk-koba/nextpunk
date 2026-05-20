@@ -53,21 +53,28 @@ yarn storybook
 | `yarn storybook` | Storybook 開発サーバー（ポート 6006） |
 | `yarn build-storybook` | Storybook の静的ビルド |
 | `yarn lint` | ESLint 実行 |
+| `yarn test` | ユニットテスト（Vitest `unit` プロジェクト） |
 | `yarn gen` | 機能生成スクリプト（`scripts/gen-feature.mjs`） |
 
 ## プロジェクト構成（抜粋）
 
 ```
 src/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx
-│   └── page.tsx
-├── components/             # MJ コンポーネント
-│   ├── MJButton.tsx, MJInput.tsx, MJSelect.tsx, ...
-│   ├── styles/            # Vanilla Extract スタイル (*.css.ts)
-│   └── *.stories.tsx       # Storybook ストーリー
-└── constants/
-    └── styles/             # テーマ・トークン（vars.css.ts, skeleton.css.ts）
+├── app/
+│   ├── layout.tsx          # フォント・AppProviders（グローバル）
+│   ├── providers/          # Yargram / Alert / Overlay
+│   ├── shell/              # サイドバー + メイン（AppShell）
+│   └── page.tsx            # → features/*/PageContainer
+├── features/               # 機能単位（yarn gen で追加）
+│   └── home/
+│       ├── HomePageContainer.tsx  # SSR + MJLayout
+│       └── HomePageView.tsx       # 必要時のみ client
+├── components/             # MJ デザインシステム
+├── hooks/                  # usePopover など
+├── constants/
+│   ├── navigation/         # サイドバー定義
+│   └── styles/             # vars.css.ts, global.css.ts
+└── utils/                  # cn など
 
 .storybook/
 ├── main.ts

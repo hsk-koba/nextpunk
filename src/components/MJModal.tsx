@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useCallback, useEffect } from 'react';
 import * as styles from './styles/MJModal.css';
 import { MJTypography } from './MJTypography';

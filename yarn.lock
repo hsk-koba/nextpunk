@@ -448,6 +448,11 @@
     "@eslint/core" "^0.17.0"
     levn "^0.4.1"
 
+"@fontsource/line-seed-jp@^5.2.1":
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/@fontsource/line-seed-jp/-/line-seed-jp-5.2.1.tgz#700520c606870202526173f75dfd3875b53445fe"
+  integrity sha512-br1DgoVDZj5ZTzZc/vMtCnQuGFGrQqcAPeRBxY+XS7+ORoh6oR8vWP1fEXQyjTuCOt84I1dPspipsSsDcao8kQ==
+
 "@graphql-typed-document-node/core@^3.1.1":
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.2.0.tgz#5f3d96ec6b2354ad6d8a28bf216a1d97b5426861"

@@ -1,11 +1,12 @@
 import type { LucideIcon } from 'lucide-react';
 import React from 'react';
 import { MJTypography } from './MJTypography';
+import type { MJFieldSize, MJFieldVariant } from './types/variants';
 import * as styles from './styles/MJInput.css';
 
 export interface MJInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
-  variant?: 'primary' | 'outline' | 'text' | 'danger' | 'default';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: MJFieldVariant;
+  size?: MJFieldSize;
   icon?: LucideIcon;
   iconPosition?: 'start' | 'end';
   className?: string;

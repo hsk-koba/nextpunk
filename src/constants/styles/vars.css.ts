@@ -31,10 +31,10 @@ export const vars = createGlobalTheme(':root', {
     disabledText: '#666666',
   },
 
-  /* フォント - Typography */
+  /* フォント - Typography（日本語: LINE Seed JP / 英語: Geist Sans） */
   font: {
     familyPrimary:
-      "'Noto Sans JP', 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "'LINE Seed JP', var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif",
     weightNormal: '400',
     weightMedium: '500',
     weightBold: '700',

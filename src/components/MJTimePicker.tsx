@@ -2,17 +2,17 @@
 
 import React, {
   useCallback,
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { MJInput } from './MJInput';
-import { MJButton } from './MJButton';
+import type { MJFieldSize, MJFieldVariant } from './types/variants';
+import { usePopover } from '@/hooks/usePopover';
+import { cn } from '@/utils/cn';
 import * as styles from './styles/MJTimePicker.css';
 
-const MENU_GAP = 4;
 const ROW_HEIGHT = 40;
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const MINUTES = Array.from({ length: 60 }, (_, i) => i);
@@ -46,15 +46,14 @@ function toDateWithTime(hours: number, minutes: number): Date {
 export interface MJTimePickerProps {
   value?: Date | string | null;
   onChange?: (time: Date | null) => void;
-  variant?: 'primary' | 'outline' | 'text' | 'danger' | 'default';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: MJFieldVariant;
+  size?: MJFieldSize;
   className?: string;
   label?: string;
   errorMessage?: string;
   disabled?: boolean;
   loading?: boolean;
   placeholder?: string;
-  /** 必須（フォームバリデーション・aria-required） */
   required?: boolean;
 }
 
@@ -74,53 +73,35 @@ export const MJTimePicker: React.FC<MJTimePickerProps> = ({
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const hoursScrollRef = useRef<HTMLDivElement | null>(null);
   const minutesScrollRef = useRef<HTMLDivElement | null>(null);
-  const closeEndFiredRef = useRef(false);
-  const [open, setOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  const [position, setPosition] = useState<{
-    top: number;
-    left: number;
-    transformOriginX: string;
-    transformOriginY: string;
-    translateX: string;
-  } | null>(null);
+  const pendingTimeRef = useRef({ hours: 0, minutes: 0 });
 
   const parsed = toTimeValue(value);
   const [internalHours, setInternalHours] = useState(() => parsed?.hours ?? 0);
   const [internalMinutes, setInternalMinutes] = useState(() => parsed?.minutes ?? 0);
 
+  pendingTimeRef.current = { hours: internalHours, minutes: internalMinutes };
+
   const isControlled = value !== undefined;
   const displayHours = isControlled && parsed != null ? parsed.hours : internalHours;
   const displayMinutes = isControlled && parsed != null ? parsed.minutes : internalMinutes;
 
-  const updatePosition = useCallback(() => {
-    const el = anchorRef.current;
-    if (!el || typeof document === 'undefined') return;
-    const rect = el.getBoundingClientRect();
-    setPosition({
-      top: rect.bottom + MENU_GAP,
-      left: rect.left,
-      transformOriginX: '0',
-      transformOriginY: '0',
-      translateX: 'none',
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!open) setIsClosing(false);
-  }, [open]);
+  const popover = usePopover({
+    anchorRef,
+    onCloseComplete: () => {
+      const { hours, minutes } = pendingTimeRef.current;
+      onChange?.(toDateWithTime(hours, minutes));
+    },
+  });
 
   useLayoutEffect(() => {
-    if (open && !isClosing) {
-      updatePosition();
+    if (popover.open && !popover.isClosing) {
       setInternalHours(displayHours);
       setInternalMinutes(displayMinutes);
     }
-    if (!open && !isClosing) setPosition(null);
-  }, [open, isClosing, updatePosition, displayHours, displayMinutes]);
+  }, [popover.open, popover.isClosing, displayHours, displayMinutes]);
 
   useLayoutEffect(() => {
-    if (!open || isClosing) return;
+    if (!popover.open || popover.isClosing) return;
     const syncScroll = () => {
       if (hoursScrollRef.current) {
         hoursScrollRef.current.scrollTop = displayHours * ROW_HEIGHT;
@@ -132,26 +113,14 @@ export const MJTimePicker: React.FC<MJTimePickerProps> = ({
     syncScroll();
     const t = requestAnimationFrame(syncScroll);
     return () => cancelAnimationFrame(t);
-  }, [open, isClosing, displayHours, displayMinutes]);
+  }, [popover.open, popover.isClosing, displayHours, displayMinutes]);
 
   const handleOpen = useCallback(() => {
     if (disabled || loading) return;
-    setOpen(true);
     setInternalHours(displayHours);
     setInternalMinutes(displayMinutes);
-  }, [disabled, loading, displayHours, displayMinutes]);
-
-  const handleCloseRequest = useCallback(() => {
-    closeEndFiredRef.current = false;
-    setIsClosing(true);
-  }, []);
-
-  const handleCloseEnd = useCallback(() => {
-    if (closeEndFiredRef.current) return;
-    closeEndFiredRef.current = true;
-    setOpen(false);
-    setIsClosing(false);
-  }, []);
+    popover.handleOpen();
+  }, [disabled, loading, displayHours, displayMinutes, popover]);
 
   const handleScroll = useCallback(
     (type: 'hours' | 'minutes') => {
@@ -170,43 +139,34 @@ export const MJTimePicker: React.FC<MJTimePickerProps> = ({
     [],
   );
 
-  const handleConfirm = useCallback(() => {
-    const d = toDateWithTime(internalHours, internalMinutes);
-    onChange?.(d);
-    handleCloseRequest();
-  }, [internalHours, internalMinutes, onChange, handleCloseRequest]);
-
   const displayValue = formatHHMM(displayHours, displayMinutes);
+  const paperStyle = popover.getPaperStyle();
 
-  const showPortal =
-    (open || isClosing) && typeof document !== 'undefined' && position;
-  const popoverContent = showPortal ? (
+  const popoverContent = popover.showPortal ? (
     <>
       <div
-        className={[styles.backdrop, isClosing ? styles.backdropClosing : styles.backdropOpen].join(' ')}
-        onClick={handleCloseRequest}
-        onAnimationEnd={(e) => {
-          if (e.target !== e.currentTarget) return;
-          if (isClosing) handleCloseEnd();
-        }}
+        className={cn(
+          styles.backdrop,
+          popover.isClosing ? styles.backdropClosing : styles.backdropOpen,
+        )}
+        onClick={popover.handleCloseRequest}
+        onAnimationEnd={(e) =>
+          popover.handleOverlayAnimationEnd(e, popover.isClosing)
+        }
         role="presentation"
         aria-hidden
       />
       <div
-        className={[styles.paper, isClosing ? styles.paperClosing : styles.paperOpen].join(' ')}
-        style={{
-          top: position!.top,
-          left: position!.left,
-          ['--menu-transform-origin-x' as string]: position!.transformOriginX,
-          ['--menu-transform-origin-y' as string]: position!.transformOriginY,
-          ['--menu-translate' as string]: position!.translateX,
-        }}
+        className={cn(
+          styles.paper,
+          popover.isClosing ? styles.paperClosing : styles.paperOpen,
+        )}
+        style={paperStyle}
         role="dialog"
         aria-label="時刻を選択"
-        onAnimationEnd={(e) => {
-          if (e.target !== e.currentTarget) return;
-          if (isClosing) handleCloseEnd();
-        }}
+        onAnimationEnd={(e) =>
+          popover.handleOverlayAnimationEnd(e, popover.isClosing)
+        }
       >
         <div className={styles.selectedTimeDisplay} aria-live="polite" aria-atomic="true">
           {formatHHMM(internalHours, internalMinutes)}
@@ -278,7 +238,7 @@ export const MJTimePicker: React.FC<MJTimePickerProps> = ({
           role="button"
           tabIndex={disabled || loading ? -1 : 0}
           aria-haspopup="dialog"
-          aria-expanded={open}
+          aria-expanded={popover.open}
           style={{ cursor: disabled || loading ? 'default' : 'pointer' }}
         >
           <MJInput

@@ -1,5 +1,6 @@
 import React from 'react';
 import { MJTypography } from './MJTypography';
+import type { MJFieldSize, MJFieldVariant } from './types/variants';
 import * as styles from './styles/MJSelect.css';
 
 export interface MJSelectOption {
@@ -9,8 +10,8 @@ export interface MJSelectOption {
 
 export interface MJSelectProps
   extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
-  variant?: 'primary' | 'outline' | 'text' | 'danger' | 'default';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: MJFieldVariant;
+  size?: MJFieldSize;
   className?: string;
   label?: string;
   options: MJSelectOption[];

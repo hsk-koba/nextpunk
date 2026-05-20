@@ -1,11 +1,12 @@
 import React from 'react';
 import { MJTypography } from './MJTypography';
+import type { MJFieldSize, MJFieldVariant } from './types/variants';
 import * as styles from './styles/MJTextarea.css';
 
 export interface MJTextareaProps
   extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'> {
-  variant?: 'primary' | 'outline' | 'text' | 'danger' | 'default';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: MJFieldVariant;
+  size?: MJFieldSize;
   className?: string;
   label?: string;
   errorMessage?: string;

@@ -7,11 +7,14 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run --project unit",
+    "test:storybook": "vitest run --project storybook",
     "gen": "node scripts/gen-feature.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@fontsource/line-seed-jp": "^5.2.1",
     "@hookform/resolvers": "^5.2.2",
     "@vanilla-extract/css": "^1.18.0",
     "@yargram/core": "^1.0.0",

@@ -11,19 +11,14 @@ import React, {
 } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import {
+  computeMenuPosition,
+  MENU_ESTIMATED_HEIGHT,
+} from '@/utils/menuPosition';
+import type { MJMenuAnchorOrigin, MJMenuTransformOrigin } from './types/menu';
 import * as styles from './styles/MJMenu.css';
 
-const MENU_GAP = 4;
-
-export type MJMenuAnchorOrigin = {
-  vertical: 'top' | 'bottom';
-  horizontal: 'left' | 'right' | 'center';
-};
-
-export type MJMenuTransformOrigin = {
-  vertical: 'top' | 'bottom';
-  horizontal: 'left' | 'right' | 'center';
-};
+export type { MJMenuAnchorOrigin, MJMenuTransformOrigin } from './types/menu';
 
 export interface MJMenuItemBase {
   type?: 'item';
@@ -71,10 +66,6 @@ const defaultTransformOrigin: MJMenuTransformOrigin = {
   horizontal: 'left',
 };
 
-function getOriginValue(h: 'left' | 'right' | 'center'): string {
-  return h === 'center' ? '50%' : h === 'right' ? '100%' : '0';
-}
-
 export const MJMenu: React.FC<MJMenuProps> = ({
   children,
   items,
@@ -86,6 +77,7 @@ export const MJMenu: React.FC<MJMenuProps> = ({
   className,
 }) => {
   const anchorRef = useRef<HTMLElement | null>(null);
+  const menuPaperRef = useRef<HTMLDivElement | null>(null);
   const closeEndFiredRef = useRef(false);
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const [isClosing, setIsClosing] = useState(false);
@@ -123,25 +115,19 @@ export const MJMenu: React.FC<MJMenuProps> = ({
     const el = anchorRef.current;
     if (!el || typeof document === 'undefined') return;
     const rect = el.getBoundingClientRect();
-    const av = anchorOrigin.vertical;
-    const ah = anchorOrigin.horizontal;
-    const tv = transformOrigin.vertical;
-    const th = transformOrigin.horizontal;
+    const menuWidth = menuPaperRef.current?.offsetWidth ?? 160;
+    const menuHeight =
+      menuPaperRef.current?.offsetHeight ?? MENU_ESTIMATED_HEIGHT;
 
-    let top = av === 'bottom' ? rect.bottom + MENU_GAP : rect.top - MENU_GAP;
-    let left = 0;
-    if (ah === 'left') left = rect.left;
-    else if (ah === 'right') left = rect.right;
-    else left = rect.left + rect.width / 2;
-
-    const translateX = ah === 'center' ? 'translateX(-50%)' : 'none';
-    setPosition({
-      top,
-      left,
-      transformOriginX: getOriginValue(th),
-      transformOriginY: tv === 'top' ? '0' : '100%',
-      translateX,
-    });
+    setPosition(
+      computeMenuPosition(
+        rect,
+        menuWidth,
+        menuHeight,
+        anchorOrigin,
+        transformOrigin,
+      ),
+    );
   }, [anchorOrigin, transformOrigin]);
 
   useEffect(() => {
@@ -149,9 +135,12 @@ export const MJMenu: React.FC<MJMenuProps> = ({
   }, [open]);
 
   useLayoutEffect(() => {
-    if (open && !isClosing) updatePosition();
+    if (open && !isClosing) {
+      updatePosition();
+      requestAnimationFrame(() => updatePosition());
+    }
     if (!open && !isClosing) setPosition(null);
-  }, [open, isClosing, updatePosition]);
+  }, [open, isClosing, updatePosition, items.length]);
 
   const triggerChild = React.Children.only(children);
   const triggerProps: Record<string, unknown> = {
@@ -207,6 +196,7 @@ export const MJMenu: React.FC<MJMenuProps> = ({
           aria-hidden
         />
         <div
+          ref={menuPaperRef}
           className={[styles.paper, isClosing ? styles.paperClosing : styles.paperOpen, className].filter(Boolean).join(' ')}
           style={{
             top: position.top,

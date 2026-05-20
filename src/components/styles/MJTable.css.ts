@@ -3,8 +3,8 @@ import { vars } from '../../constants/styles/vars.css';
 
 /* ソートクリック時：水色 → 白に戻る */
 const sortButtonFlashKeyframes = keyframes({
-  '0%': { backgroundColor: vars.color.primaryGradientStart, color: '#000' },
-  '100%': { backgroundColor: '#000', color: '#fff' },
+  '0%': { backgroundColor: vars.color.primaryGradientStart, color: vars.color.textInverse },
+  '100%': { backgroundColor: vars.color.background, color: vars.color.textPrimary },
 });
 
 /* テーブル（縦枠線なし） */
@@ -20,14 +20,14 @@ export const table = style({
 export const thead = style({});
 
 export const headerRow = style({
-  color: '#fff',
+  color: vars.color.textPrimary,
 });
 
 export const headerCell = style({
   padding: `${vars.spacing.sm} ${vars.spacing.md}`,
   textAlign: 'center',
   fontWeight: vars.font.weightBold,
-  color: '#fff',
+  color: vars.color.textPrimary,
   borderBottom: `2px solid ${vars.color.border}`,
   whiteSpace: 'nowrap',
 });

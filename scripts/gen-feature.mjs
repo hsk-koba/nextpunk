@@ -8,8 +8,6 @@ if (!inputPath) {
   process.exit(1);
 }
 
-// 先頭を大文字にする & スラッシュやハイフンを除去するヘルパー
-// users/new -> UsersNew
 const toPascalCase = (str) =>
   str
     .replace(/[/_-]+/g, ' ')
@@ -18,12 +16,9 @@ const toPascalCase = (str) =>
     .replace(/\s+/g, '');
 
 const FEATURE_NAME_PASCAL = toPascalCase(inputPath);
-// src/app/users/new などの階層を維持
 const APP_DIR = path.join(process.cwd(), 'src', 'app', inputPath);
-// src/features も同様に階層を維持
 const FEATURES_DIR = path.join(process.cwd(), 'src', 'features', inputPath);
 
-// 作成するディレクトリリスト
 const dirs = [
   APP_DIR,
   path.join(FEATURES_DIR, 'components'),
@@ -33,12 +28,10 @@ const dirs = [
   path.join(FEATURES_DIR, 'contexts'),
 ];
 
-// 1. ディレクトリの作成
-dirs.forEach(dir => {
+dirs.forEach((dir) => {
   fs.mkdirSync(dir, { recursive: true });
 });
 
-// 2. app/[path]/page.tsx の作成
 const pageContent = `
 import { ${FEATURE_NAME_PASCAL}PageContainer } from "@/features/${inputPath}/${FEATURE_NAME_PASCAL}PageContainer";
 
@@ -47,33 +40,58 @@ export default function ${FEATURE_NAME_PASCAL}Page() {
 }
 `;
 
-// 3. features/[path]/[Name]PageContainer.tsx の作成
+/** SSR: Server Component が MJLayout でラップ */
 const containerContent = `
-import React, { useEffect } from 'react';
-import { usePrinter } from '@yargram/react';
+import { MJLayout } from '@/components/MJLayout';
+import { ${FEATURE_NAME_PASCAL}PageView } from './${FEATURE_NAME_PASCAL}PageView';
 
-export const ${FEATURE_NAME_PASCAL}PageContainer: React.FC = () => {
+/** ${FEATURE_NAME_PASCAL}（Server Component + MJLayout） */
+export function ${FEATURE_NAME_PASCAL}PageContainer() {
+  return (
+    <MJLayout>
+      <${FEATURE_NAME_PASCAL}PageView />
+    </MJLayout>
+  );
+}
+`;
+
+/** クライアント専用（hooks・Yargram 等） */
+const viewContent = `
+'use client';
+
+import { useEffect } from 'react';
+import { usePrinter } from '@yargram/react';
+import { MJTypography } from '@/components/MJTypography';
+
+export function ${FEATURE_NAME_PASCAL}PageView() {
   const printer = usePrinter();
 
   useEffect(() => {
-    printer.info('${FEATURE_NAME_PASCAL}PageContainer');
+    printer.info('${FEATURE_NAME_PASCAL}PageView');
   }, [printer]);
 
   return (
     <div>
-      <h1>${FEATURE_NAME_PASCAL} Page</h1>
+      <MJTypography variant="h1" bold>
+        ${FEATURE_NAME_PASCAL}
+      </MJTypography>
     </div>
   );
-};
+}
 `;
 
-// ファイル書き込み
 fs.writeFileSync(path.join(APP_DIR, 'page.tsx'), pageContent.trim() + '\n');
-fs.writeFileSync(path.join(FEATURES_DIR, `${FEATURE_NAME_PASCAL}PageContainer.tsx`), containerContent.trim() + '\n');
+fs.writeFileSync(
+  path.join(FEATURES_DIR, `${FEATURE_NAME_PASCAL}PageContainer.tsx`),
+  containerContent.trim() + '\n',
+);
+fs.writeFileSync(
+  path.join(FEATURES_DIR, `${FEATURE_NAME_PASCAL}PageView.tsx`),
+  viewContent.trim() + '\n',
+);
 
-// 各フォルダに .gitkeep を作成
-dirs.slice(1).forEach(dir => {
-  if (dir !== APP_DIR) { // APP_DIRにはpage.tsxがあるので不要
+dirs.slice(1).forEach((dir) => {
+  if (dir !== APP_DIR) {
     fs.writeFileSync(path.join(dir, '.gitkeep'), '');
   }
 });
@@ -81,3 +99,5 @@ dirs.slice(1).forEach(dir => {
 console.log(`✅ Successfully generated feature at: ${inputPath}`);
 console.log(`📂 App Directory:  app/${inputPath}`);
 console.log(`📂 Feature Directory: features/${inputPath}`);
+console.log(`   - ${FEATURE_NAME_PASCAL}PageContainer.tsx (SSR + MJLayout)`);
+console.log(`   - ${FEATURE_NAME_PASCAL}PageView.tsx (client)`);
